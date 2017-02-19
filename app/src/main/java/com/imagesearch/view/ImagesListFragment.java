@@ -148,7 +148,6 @@ public class ImagesListFragment extends Fragment implements BaseFlickerFragment{
 	 * Start full screen image activity with transition animation.
 	 */
 	private void openFullScreenImageView(ImageData imageData, ImageView imageView){
-
 		Intent startIntent = FullScreenImageActivity.newIntent(getActivity(), imageData);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
 			Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(
