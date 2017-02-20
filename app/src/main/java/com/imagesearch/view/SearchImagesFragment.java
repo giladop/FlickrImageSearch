@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
  *
  * @author Gilad Opher
  */
-public class SearchImagesFragment extends Fragment implements SearchView.OnQueryTextListener, BaseFlickerFragment{
+public class SearchImagesFragment extends Fragment implements SearchView.OnQueryTextListener{
 
 
 	@BindView(R.id.toolbar)
@@ -40,6 +40,10 @@ public class SearchImagesFragment extends Fragment implements SearchView.OnQuery
 
 	@BindView(R.id.recent_search_label)
 	View recentLabel;
+
+
+	@BindView(R.id.fab)
+	FloatingActionButton fab;
 
 
 	/**
@@ -90,6 +94,14 @@ public class SearchImagesFragment extends Fragment implements SearchView.OnQuery
 
 		searchView.setOnQueryTextListener(this);
 		searchView.setIconifiedByDefault(false);
+
+		fab.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				onFabClicked();
+			}
+		});
+
 		return view;
 	}
 
@@ -156,7 +168,6 @@ public class SearchImagesFragment extends Fragment implements SearchView.OnQuery
 	}
 
 
-	@Override
 	public void onFabClicked(){
 		if (searchView.getQuery().length() > 0)
 			listener.invokeSearch(searchView.getQuery().toString());

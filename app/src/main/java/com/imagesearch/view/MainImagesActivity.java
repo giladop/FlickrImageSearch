@@ -5,11 +5,8 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 
 import com.imagesearch.FlickerImageSearchApplication;
 import com.imagesearch.R;
@@ -24,7 +21,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
@@ -45,8 +41,6 @@ public class MainImagesActivity extends AppCompatActivity
 	private static final String SEARCH_FRAGMENT_TAG = "search_fragment_tag";
 
 
-	@BindView(R.id.fab)
-	FloatingActionButton fab;
 
 
 	/**
@@ -78,14 +72,6 @@ public class MainImagesActivity extends AppCompatActivity
 			ft.add(R.id.fragment_container, SearchImagesFragment.newInstance(), SEARCH_FRAGMENT_TAG);
 			ft.commit();
 		}
-
-		//delegate FAB click to current representing fragment
-		fab.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				((BaseFlickerFragment)getFragmentManager().findFragmentById(R.id.fragment_container)).onFabClicked();
-			}
-		});
 	}
 
 
