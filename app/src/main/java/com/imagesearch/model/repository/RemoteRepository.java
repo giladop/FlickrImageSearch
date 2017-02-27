@@ -1,7 +1,12 @@
 package com.imagesearch.model.repository;
 
 import android.support.annotation.NonNull;
-import com.imagesearch.model.data.ImagesData;
+
+import com.imagesearch.model.data.ImageData;
+
+import java.util.List;
+
+import io.reactivex.Observable;
 
 
 
@@ -14,24 +19,9 @@ public interface RemoteRepository{
 
 
 	/**
-	 * Call back from API layer
-	 */
-	interface GetImagesCallback {
-
-
-		void onImagesLoaded(ImagesData images);
-
-
-		void onImagesNotAvailable();
-	}
-
-
-
-	/**
 	 * Get Images by {@link String} query.
-	 * Actual result, return using {@link GetImagesCallback}.
 	 */
-	void getImages(@NonNull String query, int page, @NonNull GetImagesCallback callback);
+	Observable<List<ImageData>> getImages(@NonNull String query, int page);
 
 
 }

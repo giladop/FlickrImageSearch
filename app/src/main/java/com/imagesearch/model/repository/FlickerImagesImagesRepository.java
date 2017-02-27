@@ -10,6 +10,9 @@ import java.util.*;
 
 import javax.inject.Inject;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+
 
 
 /**
@@ -76,19 +79,26 @@ public class FlickerImagesImagesRepository implements PresenterImagesRepositoryC
 		lastPage = page;
 
 		//fetch images from remote API.
-		remoteRepository.getImages(query, page, new RemoteRepository.GetImagesCallback(){
+		remoteRepository.getImages(query, page)
+			.observeOn(AndroidSchedulers.mainThread())
+			.subscribeWith( new DisposableObserver<List<ImageData>>(){
 
-			@Override
-			public void onImagesLoaded(ImagesData imagesData){
-				imagesCache.addAll(imagesData.images);
-				callback.onImagesLoaded(imagesData.images);
-			}
+				@Override
+				public void onNext(List<ImageData> imagesData){
+					callback.onImagesLoaded(imagesData);
+				}
 
-			@Override
-			public void onImagesNotAvailable(){
-				callback.onImagesNotAvailable();
+				@Override
+				public void onError(Throwable e){
+					callback.onImagesNotAvailable();
+				}
+
+				@Override
+				public void onComplete(){
+
+				}
 			}
-		});
+		);
 		return true;
 	}
 

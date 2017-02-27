@@ -1,7 +1,6 @@
 package com.imagesearch.di;
 
 import com.imagesearch.model.api.FlickerApi;
-import com.imagesearch.model.api.FlickerApiImpl;
 
 import dagger.Module;
 import dagger.Provides;
@@ -17,14 +16,9 @@ public class ApiModule{
 
 
 	@Provides
-	FlickerApi provideGoogleMapsApi(Retrofit retrofit){
+	FlickerApi provideFlickerApi(Retrofit retrofit){
 		return retrofit.create(FlickerApi.class);
 	}
 
-
-	@Provides
-	FlickerApiImpl provideGoogleMapsApiImpl(FlickerApi api){
-		return new FlickerApiImpl(api);
-	}
 
 }

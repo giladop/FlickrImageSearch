@@ -3,7 +3,7 @@ package com.imagesearch.di;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.imagesearch.model.api.FlickerApiImpl;
+import com.imagesearch.model.api.FlickerApi;
 import com.squareup.picasso.Picasso;
 
 import dagger.Component;
@@ -21,7 +21,7 @@ import dagger.Component;
 public interface ApiComponent{
 
 
-	FlickerApiImpl flickerApiImpl();
+	FlickerApi flickerApi();
 
 
 	SharedPreferences SharedPreferences();

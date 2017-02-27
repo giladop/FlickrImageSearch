@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Singleton;
@@ -51,6 +52,7 @@ public class AppModule{
 		return new Retrofit.Builder()
 				.baseUrl(APP_BASE_URL)
 				.addConverterFactory(GsonConverterFactory.create(gson))
+				.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 				.build();
 	}
 

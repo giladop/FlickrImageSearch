@@ -3,7 +3,7 @@ package com.imagesearch.di;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.imagesearch.model.api.FlickerApiImpl;
+import com.imagesearch.model.api.FlickerApi;
 import com.imagesearch.model.repository.*;
 import com.imagesearch.presenter.FlickerImagesSearchPresenter;
 import com.imagesearch.presenter.PresenterRecentSearchContract;
@@ -22,7 +22,7 @@ public class FlickerImagesModule{
 
 
 	@Provides
-	RemoteRepository provideRemoteRepository(FlickerApiImpl api){
+	RemoteRepository provideRemoteRepository(FlickerApi api){
 		return new RemoteImagesRepository(api);
 	}
 

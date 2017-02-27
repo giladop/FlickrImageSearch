@@ -1,10 +1,16 @@
 package com.imagesearch.model.repository;
 
 import android.support.annotation.NonNull;
-import com.imagesearch.model.api.FlickerApiImpl;
-import com.imagesearch.model.data.ImagesData;
+
+import com.imagesearch.model.api.FlickerApi;
+import com.imagesearch.model.data.ImageData;
+
+import java.util.List;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 
 
@@ -19,31 +25,22 @@ public class RemoteImagesRepository implements RemoteRepository{
 	/**
 	 * The API retrofit impl.
 	 */
-	private FlickerApiImpl api;
+	private FlickerApi api;
+
 
 
 	@Inject
-	public RemoteImagesRepository(FlickerApiImpl api){
+	public RemoteImagesRepository(FlickerApi api){
 		this.api = api;
 	}
 
 
-
 	@Override
-	public void getImages(@NonNull String query, int page, @NonNull final GetImagesCallback callback){
+	public Observable<List<ImageData>> getImages(@NonNull String query, int page){
 
-		api.getImages(query, page, new GetImagesCallback(){
-			@Override
-			public void onImagesLoaded(ImagesData images){
-				callback.onImagesLoaded(images);
-			}
-
-			@Override
-			public void onImagesNotAvailable()	{
-				callback.onImagesNotAvailable();
-			}
-		});
+		return api.getImages(query, page)
+				.subscribeOn(Schedulers.io())
+				.map(res -> res.imagesData.images);
 	}
-
 
 }
