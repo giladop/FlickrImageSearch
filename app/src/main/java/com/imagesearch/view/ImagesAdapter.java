@@ -2,6 +2,7 @@ package com.imagesearch.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +66,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewH
 	public void addImages(List<ImageData> newImages){
 		images.addAll(newImages);
 		notifyItemRangeInserted(total, newImages.size());
-		total = total + newImages.size() - 1;
+		total = total + newImages.size();
 	}
 
 
@@ -121,7 +122,10 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewH
 	public void onBindViewHolder(ImageViewHolder holder, int position){
 		ImageData imageData = images.get(position);
 
-		picasso.load(imageData.getImageUrl()).into(holder.imageView);
+		if (imageData.getBitmap() != null)
+			holder.imageView.setImageBitmap(imageData.getBitmap());
+		else
+			picasso.load(imageData.getImageUrl()).into(holder.imageView);
 	}
 
 
