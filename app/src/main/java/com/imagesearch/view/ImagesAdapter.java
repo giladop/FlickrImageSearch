@@ -121,11 +121,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewH
 	@Override
 	public void onBindViewHolder(ImageViewHolder holder, int position){
 		ImageData imageData = images.get(position);
-
-		if (imageData.getBitmap() != null)
-			holder.imageView.setImageBitmap(imageData.getBitmap());
-		else
-			picasso.load(imageData.getImageUrl()).into(holder.imageView);
+		picasso.load(imageData.getImageUrl()).into(holder.imageView);
 	}
 
 

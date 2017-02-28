@@ -105,25 +105,29 @@ public class ImagesListFragment extends Fragment{
 
 		toolbar.setTitle(getArguments().getString(QUERY_EXTRA));
 
-		swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
-			@Override
-			public void onRefresh(){
-				imagesAdapter.refresh();
-				currentPage = 1;
-				loadMore();
-			}
-		});
-
 		GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
-		imagesList.setLayoutManager(gridLayoutManager);
-
-		EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+		final EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
 			@Override
 			public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
 				currentPage = page;
 				loadMore();
 			}
 		};
+
+		swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+			@Override
+			public void onRefresh(){
+				scrollListener.resetState();
+				imagesAdapter.refresh();
+				currentPage = 1;
+				loadMore();
+			}
+		});
+
+
+		imagesList.setLayoutManager(gridLayoutManager);
+
+
 
 		imagesAdapter = new ImagesAdapter(getActivity(), new ImagesAdapter.ImagesCallback(){
 			@Override
