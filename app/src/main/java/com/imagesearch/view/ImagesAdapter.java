@@ -2,7 +2,6 @@ package com.imagesearch.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,7 @@ import butterknife.ButterKnife;
  *
  * @author Gilad Opher
  */
-public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
+class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
 
 
 	/**
@@ -63,7 +62,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewH
 	/**
 	 * Add more images to list.
 	 */
-	public void addImages(List<ImageData> newImages){
+	void addImages(List<ImageData> newImages){
 		images.addAll(newImages);
 		notifyItemRangeInserted(total, newImages.size());
 		total = total + newImages.size();
@@ -73,7 +72,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewH
 	/**
 	 * Clear list on refresh.
 	 */
-	public void refresh(){
+	void refresh(){
 		images.clear();
 		notifyDataSetChanged();
 	}
