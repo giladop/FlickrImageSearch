@@ -114,14 +114,11 @@ public class ImagesListFragment extends Fragment{
 			}
 		};
 
-		swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
-			@Override
-			public void onRefresh(){
-				scrollListener.resetState();
-				imagesAdapter.refresh();
-				currentPage = 1;
-				loadMore();
-			}
+		swipeRefreshLayout.setOnRefreshListener(() -> {
+			scrollListener.resetState();
+			imagesAdapter.refresh();
+			currentPage = 1;
+			loadMore();
 		});
 
 
@@ -129,12 +126,7 @@ public class ImagesListFragment extends Fragment{
 
 
 
-		imagesAdapter = new ImagesAdapter(getActivity(), new ImagesAdapter.ImagesCallback(){
-			@Override
-			public void onImageClicked(ImageData imageData, ImageView imageView){
-				openFullScreenImageView(imageData, imageView);
-			}
-		});
+		imagesAdapter = new ImagesAdapter(getActivity(), this::openFullScreenImageView);
 
 		imagesList.setAdapter(imagesAdapter);
 		imagesList.addOnScrollListener(scrollListener);
@@ -150,12 +142,7 @@ public class ImagesListFragment extends Fragment{
 			loadMore();
 		}
 
-		fab.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				onFabClicked();
-			}
-		});
+		fab.setOnClickListener(v -> onFabClicked());
 
 		return view;
 	}
