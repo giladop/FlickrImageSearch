@@ -28,7 +28,6 @@ public class RemoteImagesRepository implements RemoteRepository{
 	private FlickerApi api;
 
 
-
 	@Inject
 	public RemoteImagesRepository(FlickerApi api){
 		this.api = api;
@@ -40,7 +39,9 @@ public class RemoteImagesRepository implements RemoteRepository{
 
 		return api.getImages(query, page)
 				.subscribeOn(Schedulers.io())
-				.map(res -> res.imagesData.images);
+				.map(res -> res.imagesData.images)
+				.flatMapIterable(images -> images)
+				.buffer(3);
 	}
 
 }
