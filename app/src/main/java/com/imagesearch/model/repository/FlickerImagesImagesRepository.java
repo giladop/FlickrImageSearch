@@ -70,7 +70,7 @@ public class FlickerImagesImagesRepository implements PresenterImagesRepositoryC
 		}
 
 		// clear cache if new query
-		if (lastQuery != null && !lastQuery.equals(query)){
+		if ((lastQuery != null && !lastQuery.equals(query)) || page == 1){
 			imagesCache.clear();
 		}
 
