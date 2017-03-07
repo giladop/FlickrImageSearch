@@ -1,7 +1,7 @@
-package com.imagesearch.presenter;
+package com.imagesearch.searchresults.presenter;
 
-import com.imagesearch.model.data.ImageData;
-import com.imagesearch.view.MainImagesActivity;
+import com.imagesearch.searchresults.model.data.ImageData;
+import com.imagesearch.searchresults.view.SearchResultsActivity;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * The contract between {@link FlickerImagesSearchPresenter} and it's corresponding views.
- * For simplify, the view {@link MainImagesActivity} delegate data to corresponding fragments.
+ * For simplify, the view {@link SearchResultsActivity} delegate data to corresponding fragments.
  *
  * @author Gilad Opher
  */
@@ -31,9 +31,6 @@ public interface FlickerImagesPresenterViewContract{
 		void onImagesLoaded(List<ImageData> images);
 
 
-		void onHistoryLoaded(List<String> history);
-
-
 		void onImagesNotFound();
 	}
 
@@ -45,12 +42,6 @@ public interface FlickerImagesPresenterViewContract{
 
 
 		void getImages(String query, int page);
-
-
-		void getHistory();
-
-
-		void clearHistory();
 
 
 		void bind(View v);

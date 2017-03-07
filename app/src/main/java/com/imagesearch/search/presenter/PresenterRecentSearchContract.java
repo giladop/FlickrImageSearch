@@ -1,6 +1,8 @@
-package com.imagesearch.presenter;
+package com.imagesearch.search.presenter;
 
 import android.support.annotation.NonNull;
+
+import com.imagesearch.searchresults.presenter.FlickerImagesSearchPresenter;
 
 import java.util.List;
 

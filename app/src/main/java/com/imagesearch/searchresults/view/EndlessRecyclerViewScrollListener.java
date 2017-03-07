@@ -1,4 +1,4 @@
-package com.imagesearch.view;
+package com.imagesearch.searchresults.view;
 
 import android.support.v7.widget.*;
 import android.widget.AbsListView;

@@ -1,9 +1,9 @@
-package com.imagesearch.model.repository;
+package com.imagesearch.searchresults.model.repository;
 
 import android.support.annotation.NonNull;
 
-import com.imagesearch.model.api.FlickerApi;
-import com.imagesearch.model.data.ImageData;
+import com.imagesearch.searchresults.model.api.FlickerApi;
+import com.imagesearch.searchresults.model.data.ImageData;
 
 import java.util.List;
 

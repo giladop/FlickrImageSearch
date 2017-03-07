@@ -1,10 +1,11 @@
-package com.imagesearch.model.repository;
+package com.imagesearch.searchresults.model.repository;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
-import com.imagesearch.model.data.ImageData;
-import com.imagesearch.model.data.ImagesData;
-import com.imagesearch.presenter.PresenterImagesRepositoryContract;
+import com.imagesearch.searchresults.model.data.ImageData;
+import com.imagesearch.searchresults.model.data.ImagesData;
+import com.imagesearch.searchresults.presenter.PresenterImagesRepositoryContract;
 
 import java.util.*;
 
@@ -85,6 +86,7 @@ public class FlickerImagesImagesRepository implements PresenterImagesRepositoryC
 
 				@Override
 				public void onNext(List<ImageData> imagesData){
+					imagesCache.addAll(imagesData);
 					callback.onImagesLoaded(imagesData);
 				}
 
@@ -95,11 +97,18 @@ public class FlickerImagesImagesRepository implements PresenterImagesRepositoryC
 
 				@Override
 				public void onComplete(){
-
+					callback.onImagesLoaded(new ArrayList<>());
 				}
 			}
 		);
 		return true;
+	}
+
+
+
+	@Override
+	public boolean isCached(){
+		return imagesCache.isEmpty();
 	}
 
 

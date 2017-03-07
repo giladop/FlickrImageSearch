@@ -1,6 +1,6 @@
 package com.imagesearch.di;
 
-import com.imagesearch.model.api.FlickerApi;
+import com.imagesearch.searchresults.model.api.FlickerApi;
 
 import dagger.Module;
 import dagger.Provides;

@@ -1,4 +1,4 @@
-package com.imagesearch.view;
+package com.imagesearch.searchresults.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +9,7 @@ import android.widget.ImageView;
 
 import com.imagesearch.FlickerImageSearchApplication;
 import com.imagesearch.R;
-import com.imagesearch.model.data.ImageData;
+import com.imagesearch.searchresults.model.data.ImageData;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

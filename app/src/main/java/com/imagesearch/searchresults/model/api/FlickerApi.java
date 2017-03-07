@@ -1,6 +1,6 @@
-package com.imagesearch.model.api;
+package com.imagesearch.searchresults.model.api;
 
-import com.imagesearch.model.data.ImagesResultObject;
+import com.imagesearch.searchresults.model.data.ImagesResultObject;
 
 import io.reactivex.Observable;
 import retrofit2.Retrofit;

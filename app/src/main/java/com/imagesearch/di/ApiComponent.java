@@ -3,7 +3,7 @@ package com.imagesearch.di;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.imagesearch.model.api.FlickerApi;
+import com.imagesearch.searchresults.model.api.FlickerApi;
 import com.squareup.picasso.Picasso;
 
 import dagger.Component;

@@ -1,4 +1,4 @@
-package com.imagesearch.model.data;
+package com.imagesearch.searchresults.model.data;
 
 import com.google.gson.annotations.SerializedName;
 

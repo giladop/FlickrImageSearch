@@ -1,4 +1,4 @@
-package com.imagesearch.view;
+package com.imagesearch.searchresults.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import com.imagesearch.R;
 import com.imagesearch.di.DaggerFlickerImagesComponent;
 import com.imagesearch.di.FlickerImagesComponent;
 import com.imagesearch.di.FlickerImagesModule;
-import com.imagesearch.model.data.ImageData;
+import com.imagesearch.searchresults.model.data.ImageData;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;

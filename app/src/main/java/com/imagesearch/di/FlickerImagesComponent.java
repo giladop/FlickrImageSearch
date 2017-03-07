@@ -1,7 +1,8 @@
 package com.imagesearch.di;
 
-import com.imagesearch.view.FullScreenImageActivity;
-import com.imagesearch.view.MainImagesActivity;
+import com.imagesearch.search.view.SearchActivity;
+import com.imagesearch.searchresults.view.FullScreenImageActivity;
+import com.imagesearch.searchresults.view.SearchResultsActivity;
 
 import dagger.Component;
 
@@ -18,9 +19,12 @@ import dagger.Component;
 public interface FlickerImagesComponent{
 
 
-	void inject(MainImagesActivity activity);
+	void inject(SearchResultsActivity activity);
 
 
 	void inject(FullScreenImageActivity activity);
+
+
+	void inject(SearchActivity activity);
 
 }

@@ -1,10 +1,10 @@
-package com.imagesearch.model.repository;
+package com.imagesearch.search.model.repository;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import com.google.gson.Gson;
-import com.imagesearch.model.data.RecentSearch;
-import com.imagesearch.presenter.PresenterRecentSearchContract;
+import com.imagesearch.search.model.data.RecentSearch;
+import com.imagesearch.search.presenter.PresenterRecentSearchContract;
 
 import javax.inject.Inject;
 

@@ -1,6 +1,6 @@
-package com.imagesearch.presenter;
+package com.imagesearch.searchresults.presenter;
 
-import com.imagesearch.model.data.ImageData;
+import com.imagesearch.searchresults.model.data.ImageData;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import javax.inject.Inject;
  * @author Gilad Opher
  */
 public class FlickerImagesSearchPresenter implements PresenterImagesRepositoryContract.GetImagesCallback,
-		PresenterRecentSearchContract.GetSearchHistoryCallback, FlickerImagesPresenterViewContract.UserActionsListener{
+		FlickerImagesPresenterViewContract.UserActionsListener{
 
 
 	/**
@@ -29,16 +29,9 @@ public class FlickerImagesSearchPresenter implements PresenterImagesRepositoryCo
 	private PresenterImagesRepositoryContract imagesRepository;
 
 
-	/**
-	 * The recent search query repository.
-	 */
-	private PresenterRecentSearchContract recentSearchRepository;
-
-
 	@Inject
-	public FlickerImagesSearchPresenter(PresenterImagesRepositoryContract imagesRepository, PresenterRecentSearchContract recentSearchRepository){
+	public FlickerImagesSearchPresenter(PresenterImagesRepositoryContract imagesRepository){
 		this.imagesRepository = imagesRepository;
-		this.recentSearchRepository = recentSearchRepository;
 	}
 
 
@@ -49,7 +42,7 @@ public class FlickerImagesSearchPresenter implements PresenterImagesRepositoryCo
 	public void onImagesLoaded(List<ImageData> images){
 		if (view != null){
 			view.hideLoadingImagesProgressIndicator();
-			if (images.isEmpty())
+			if (images.isEmpty() && imagesRepository.isCached())
 				view.onImagesNotFound();
 			else
 				view.onImagesLoaded(images);
@@ -77,56 +70,20 @@ public class FlickerImagesSearchPresenter implements PresenterImagesRepositoryCo
 			if (view != null)
 				view.showLoadingImagesProgressIndicator();
 
-			recentSearchRepository.onNewQuery(query);
+	//		recentSearchRepository.onNewQuery(query);
 		}
 	}
 
-
-	/**
-	 * Request recent search.
-	 */
-	@Override
-	public void getHistory(){
-		recentSearchRepository.getSearchHistory(this);
-	}
-
-
-	/**
-	 * Clear recent search.
-	 */
-	@Override
-	public void clearHistory(){
-		recentSearchRepository.clearHistory();
-	}
-
-
-	/**
-	 * Invoke when view become visible.
-	 */
 	@Override
 	public void bind(FlickerImagesPresenterViewContract.View view){
 		this.view = view;
-		recentSearchRepository.reloadHistory();
 	}
 
 
-	/**
-	 * Invoke when view become unavailable.
-	 */
 	@Override
 	public void unbind(){
-		view = null;
-		recentSearchRepository.saveHistory();
+		this.view = null;
 	}
 
-
-	/**
-	 * Invoke when recent searches was loaded.
-	 */
-	@Override
-	public void onHistoryLoaded(List<String> history){
-		if (view != null)
-			view.onHistoryLoaded(history);
-	}
 
 }

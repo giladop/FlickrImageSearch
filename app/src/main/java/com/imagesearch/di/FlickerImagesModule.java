@@ -3,11 +3,15 @@ package com.imagesearch.di;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.imagesearch.model.api.FlickerApi;
-import com.imagesearch.model.repository.*;
-import com.imagesearch.presenter.FlickerImagesSearchPresenter;
-import com.imagesearch.presenter.PresenterRecentSearchContract;
-import com.imagesearch.presenter.PresenterImagesRepositoryContract;
+import com.imagesearch.searchresults.model.api.FlickerApi;
+import com.imagesearch.searchresults.model.repository.FlickerImagesImagesRepository;
+import com.imagesearch.searchresults.model.repository.RemoteImagesRepository;
+import com.imagesearch.searchresults.model.repository.RemoteRepository;
+import com.imagesearch.searchresults.presenter.FlickerImagesSearchPresenter;
+import com.imagesearch.search.model.repository.RecentSearchesRepository;
+import com.imagesearch.search.presenter.PresenterRecentSearchContract;
+import com.imagesearch.searchresults.presenter.PresenterImagesRepositoryContract;
+import com.imagesearch.search.presenter.SearchPresenter;
 
 import dagger.Module;
 import dagger.Provides;
@@ -40,8 +44,14 @@ public class FlickerImagesModule{
 
 
 	@Provides
-	FlickerImagesSearchPresenter provideFlickerImagesSearchPresenter(PresenterImagesRepositoryContract imagesRepositoryContract, PresenterRecentSearchContract recentSearchContract){
-		return new FlickerImagesSearchPresenter(imagesRepositoryContract, recentSearchContract);
+	FlickerImagesSearchPresenter provideFlickerImagesSearchPresenter(PresenterImagesRepositoryContract imagesRepositoryContract){
+		return new FlickerImagesSearchPresenter(imagesRepositoryContract);
+	}
+
+
+	@Provides
+	SearchPresenter provideSearchPresenter(PresenterRecentSearchContract recentSearchContract){
+		return new SearchPresenter(recentSearchContract);
 	}
 
 }

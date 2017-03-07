@@ -1,4 +1,4 @@
-package com.imagesearch.view;
+package com.imagesearch.search.view;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,7 +31,7 @@ public class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryAdap
 
 
 	/**
-	 * A callback allowing delegate recent search click backwards to {@link SearchImagesFragment}.
+	 * A callback allowing delegate recent search click backwards to {@link SearchActivity}.
 	 */
 	private SearchHistoryCallback callback;
 

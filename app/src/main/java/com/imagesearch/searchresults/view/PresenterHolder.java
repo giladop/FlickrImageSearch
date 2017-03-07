@@ -1,9 +1,9 @@
-package com.imagesearch.view;
+package com.imagesearch.searchresults.view;
 
 import android.app.Fragment;
 import android.os.Bundle;
 
-import com.imagesearch.presenter.FlickerImagesSearchPresenter;
+import com.imagesearch.searchresults.presenter.FlickerImagesSearchPresenter;
 
 
 

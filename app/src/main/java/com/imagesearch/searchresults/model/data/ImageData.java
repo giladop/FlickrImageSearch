@@ -1,4 +1,4 @@
-package com.imagesearch.model.data;
+package com.imagesearch.searchresults.model.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;

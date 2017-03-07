@@ -1,8 +1,8 @@
-package com.imagesearch.presenter;
+package com.imagesearch.searchresults.presenter;
 
 import android.support.annotation.NonNull;
 
-import com.imagesearch.model.data.ImageData;
+import com.imagesearch.searchresults.model.data.ImageData;
 
 import java.util.List;
 
@@ -34,5 +34,8 @@ public interface PresenterImagesRepositoryContract{
 	 * A boolean indication is return indicating a long operation.
 	 */
 	boolean getImages(@NonNull String query, int page, @NonNull GetImagesCallback callback);
+
+
+	boolean isCached();
 
 }
