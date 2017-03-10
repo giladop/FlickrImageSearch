@@ -1,6 +1,7 @@
 package com.imagesearch.di;
 
 import com.imagesearch.search.view.SearchActivity;
+import com.imagesearch.searchresults.presenter.FlickerImagesSearchPresenter;
 import com.imagesearch.searchresults.view.FullScreenImageActivity;
 import com.imagesearch.searchresults.view.SearchResultsActivity;
 
@@ -13,7 +14,7 @@ import dagger.Component;
  */
 @ActivityScoped
 @Component(
-		dependencies = {ApiComponent.class},
+		dependencies = {AppComponent.class},
 		modules = {FlickerImagesModule.class}
 )
 public interface FlickerImagesComponent{
@@ -26,5 +27,6 @@ public interface FlickerImagesComponent{
 
 
 	void inject(SearchActivity activity);
+
 
 }

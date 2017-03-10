@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.imagesearch.search.presenter.PresenterRecentSearchContract;
+import com.imagesearch.searchresults.presenter.PresenterImagesRepositoryContract;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Singleton;
@@ -18,7 +20,7 @@ import retrofit2.Retrofit;
  */
 @Singleton
 @Component(
-		modules = {AppModule.class}
+		modules = {AppModule.class, RepositoryModule.class}
 )
 public interface AppComponent{
 
@@ -36,5 +38,11 @@ public interface AppComponent{
 
 
 	SharedPreferences sharedPreferences();
+
+
+	PresenterImagesRepositoryContract PresenterImagesRepositoryContract();
+
+
+	PresenterRecentSearchContract PresenterRecentSearchContract();
 
 }
