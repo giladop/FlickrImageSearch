@@ -1,8 +1,6 @@
 package com.imagesearch;
 
 import android.app.Application;
-import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.imagesearch.di.*;
 
@@ -22,18 +20,25 @@ public class FlickerImageSearchApplication extends Application{
 	private AppComponent appComponent;
 
 
+	private static FlickerImageSearchApplication instance;
+
+
 	@Override
 	public void onCreate(){
 		super.onCreate();
-		this.appComponent = DaggerAppComponent.builder().appModule(new AppModule(getApplicationContext())).build();
+		instance = FlickerImageSearchApplication.this;
+		this.appComponent = DaggerAppComponent.builder().
+				appModule(new AppModule(getApplicationContext()))
+				.repositoryModule(new RepositoryModule())
+				.build();
 	}
 
 
 	/**
 	 * static access to {@link FlickerImageSearchApplication}.
 	 */
-	public static FlickerImageSearchApplication getFlickerImageSearchApplication(@NonNull Context context){
-		return (FlickerImageSearchApplication)context.getApplicationContext();
+	public static FlickerImageSearchApplication getFlickerImageSearchApplication(){
+		return (FlickerImageSearchApplication)instance.getApplicationContext();
 	}
 
 
@@ -44,11 +49,4 @@ public class FlickerImageSearchApplication extends Application{
 		return appComponent;
 	}
 
-
-	/**
-	 * Create and return {@link ApiComponent}.
-	 */
-	public ApiComponent getApiComponent(){
-		return DaggerApiComponent.builder().appComponent(appComponent).apiModule(new ApiModule()).build();
-	}
 }

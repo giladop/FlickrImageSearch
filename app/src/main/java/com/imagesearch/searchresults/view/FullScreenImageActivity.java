@@ -73,7 +73,7 @@ public class FullScreenImageActivity extends AppCompatActivity{
 	private void inject(){
 		FlickerImagesComponent flickerImagesComponent =
 			DaggerFlickerImagesComponent.builder()
-				.apiComponent(FlickerImageSearchApplication.getFlickerImageSearchApplication(this).getApiComponent())
+				.appComponent(FlickerImageSearchApplication.getFlickerImageSearchApplication().getAppComponent())
 				.flickerImagesModule(new FlickerImagesModule())
 				.build();
 		flickerImagesComponent.inject(this);

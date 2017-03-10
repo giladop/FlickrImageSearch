@@ -81,7 +81,10 @@ public class FlickerImagesSearchPresenter implements PresenterImagesRepositoryCo
 
 
 	@Override
-	public void unbind(){
+	public void unbind(boolean strong){
+		if (strong)
+			imagesRepository.clearCache();
+
 		this.view = null;
 	}
 

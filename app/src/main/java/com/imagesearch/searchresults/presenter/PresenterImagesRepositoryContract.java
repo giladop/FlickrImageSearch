@@ -38,4 +38,7 @@ public interface PresenterImagesRepositoryContract{
 
 	boolean isCached();
 
+
+	void clearCache();
+
 }

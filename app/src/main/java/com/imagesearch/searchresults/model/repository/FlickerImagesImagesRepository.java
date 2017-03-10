@@ -1,13 +1,13 @@
 package com.imagesearch.searchresults.model.repository;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.imagesearch.searchresults.model.data.ImageData;
 import com.imagesearch.searchresults.model.data.ImagesData;
 import com.imagesearch.searchresults.presenter.PresenterImagesRepositoryContract;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -105,10 +105,17 @@ public class FlickerImagesImagesRepository implements PresenterImagesRepositoryC
 	}
 
 
-
 	@Override
 	public boolean isCached(){
 		return imagesCache.isEmpty();
+	}
+
+
+	@Override
+	public void clearCache(){
+		imagesCache.clear();
+		lastQuery = null;
+		lastPage = 0;
 	}
 
 

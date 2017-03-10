@@ -47,7 +47,7 @@ public interface FlickerImagesPresenterViewContract{
 		void bind(View v);
 
 
-		void unbind();
+		void unbind(boolean strong);
 	}
 
 }

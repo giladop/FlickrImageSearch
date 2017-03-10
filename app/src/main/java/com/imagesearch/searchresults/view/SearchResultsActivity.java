@@ -1,6 +1,7 @@
 package com.imagesearch.searchresults.view;
 
-import android.app.*;
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -13,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -26,7 +26,6 @@ import com.imagesearch.searchresults.model.data.ImageData;
 import com.imagesearch.searchresults.presenter.FlickerImagesPresenterViewContract;
 import com.imagesearch.searchresults.presenter.FlickerImagesSearchPresenter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -80,11 +79,6 @@ public class SearchResultsActivity extends AppCompatActivity
 	private int currentPage;
 
 
-	/**
-	 * Images data list.
-	 */
-	private ArrayList<ImageData> images;
-
 
 	/**
 	 * This is the PRESENTER in MVP pattern. For simplify,
@@ -104,15 +98,7 @@ public class SearchResultsActivity extends AppCompatActivity
 		Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
-		FragmentManager fm = getFragmentManager();
-
-		//setup presenter
-		setupAndBindPresenter(fm);
-
-		ButterKnife.bind(this, view);
-
-		toolbar.setTitle(getIntent().getStringExtra(QUERY_EXTRA));
-
+		setTitle(getIntent().getStringExtra(QUERY_EXTRA));
 		GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
 		final EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
 			@Override
@@ -129,11 +115,7 @@ public class SearchResultsActivity extends AppCompatActivity
 			loadMore();
 		});
 
-
 		imagesList.setLayoutManager(gridLayoutManager);
-
-
-
 		imagesAdapter = new ImagesAdapter(this, this::openFullScreenImageView);
 
 		imagesList.setAdapter(imagesAdapter);
@@ -142,16 +124,14 @@ public class SearchResultsActivity extends AppCompatActivity
 		if (savedInstanceState != null){
 			currentPage = savedInstanceState.getInt("page");
 			scrollListener.setCurrentPage(currentPage);
-			images = savedInstanceState.getParcelableArrayList("images");
-			imagesAdapter.addImages(images);
 		}else{
-			images = new ArrayList<>();
 			currentPage = 1;
-			loadMore();
 		}
 
 		fab.setOnClickListener(v -> finish());
 
+		flickerImagesSearchPresenter.bind(this);
+		loadMore();
 	}
 
 
@@ -172,25 +152,6 @@ public class SearchResultsActivity extends AppCompatActivity
 			startActivity(startIntent);
 	}
 
-	/**
-	 * create/recreate {@link FlickerImagesSearchPresenter} with help of {@link PresenterHolder} the presenter
-	 * Survive configuration change.
-	 */
-	private void setupAndBindPresenter(FragmentManager fm){
-		PresenterHolder presenterHolder = (PresenterHolder) fm.findFragmentByTag("presenterHolder");
-		if (presenterHolder == null) {
-
-			fm.beginTransaction().add(new PresenterHolder(), "presenterHolder").commit();
-			fm.executePendingTransactions();
-			inject();
-		}else
-			flickerImagesSearchPresenter = presenterHolder.getFlickerImagesSearchPresenter();
-
-		if (flickerImagesSearchPresenter == null)
-			inject();
-
-		flickerImagesSearchPresenter.bind(this);
-	}
 
 
 	/**
@@ -198,14 +159,7 @@ public class SearchResultsActivity extends AppCompatActivity
 	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState){
-
-		PresenterHolder presenterHolder = (PresenterHolder) getFragmentManager().findFragmentByTag("presenterHolder");
-		if (presenterHolder != null)
-			presenterHolder.setFlickerImagesSearchPresenter(flickerImagesSearchPresenter);
-
 		outState.putInt("page", currentPage);
-		outState.putParcelableArrayList("images", images);
-
 		super.onSaveInstanceState(outState);
 	}
 
@@ -226,7 +180,7 @@ public class SearchResultsActivity extends AppCompatActivity
 	@Override
 	protected void onStop(){
 		super.onStop();
-		flickerImagesSearchPresenter.unbind();
+		flickerImagesSearchPresenter.unbind(isFinishing());
 	}
 
 
@@ -235,10 +189,10 @@ public class SearchResultsActivity extends AppCompatActivity
 	 */
 	private void inject(){
 		FlickerImagesComponent flickerImagesComponent =
-				DaggerFlickerImagesComponent.builder()
-						.apiComponent(FlickerImageSearchApplication.getFlickerImageSearchApplication(this).getApiComponent())
-						.flickerImagesModule(new FlickerImagesModule())
-						.build();
+			DaggerFlickerImagesComponent.builder()
+				.appComponent(FlickerImageSearchApplication.getFlickerImageSearchApplication().getAppComponent())
+				.flickerImagesModule(new FlickerImagesModule())
+				.build();
 		flickerImagesComponent.inject(this);
 	}
 
@@ -258,7 +212,6 @@ public class SearchResultsActivity extends AppCompatActivity
 
 	@Override
 	public void onImagesLoaded(List<ImageData> images){
-		this.images.addAll(images);
 		imagesAdapter.addImages(images);
 	}
 

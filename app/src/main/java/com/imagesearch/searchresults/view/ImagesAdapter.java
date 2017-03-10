@@ -54,7 +54,7 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
 
 	ImagesAdapter(Context context, ImagesCallback imagesCallback){
 		this.images = new ArrayList<>();
-		this.picasso = FlickerImageSearchApplication.getFlickerImageSearchApplication(context).getAppComponent().picasso();
+		this.picasso = FlickerImageSearchApplication.getFlickerImageSearchApplication().getAppComponent().picasso();
 		this.imagesCallback = imagesCallback;
 	}
 
