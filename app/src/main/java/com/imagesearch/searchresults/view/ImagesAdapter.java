@@ -2,6 +2,7 @@ package com.imagesearch.searchresults.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +48,7 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
 
 
 	/**
-	 * A callback allowing delegate image click backwards to {@link ImagesListFragment}.
+	 * A callback allowing delegate image click backwards to {@link SearchResultsActivity}.
 	 */
 	private ImagesCallback imagesCallback;
 
@@ -63,6 +64,10 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
 	 * Add more images to list.
 	 */
 	void addImages(List<ImageData> newImages){
+
+		Log.d("callback", "total: " + total);
+
+
 		images.addAll(newImages);
 		notifyItemRangeInserted(total, newImages.size());
 		total = total + newImages.size();
