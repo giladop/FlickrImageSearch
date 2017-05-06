@@ -33,12 +33,16 @@ public interface PresenterImagesRepositoryContract{
 	 * Get images method. The results are returned via {@link GetImagesCallback}.
 	 * A boolean indication is return indicating a long operation.
 	 */
-	boolean getImages(@NonNull String query, int page, @NonNull GetImagesCallback callback);
+	boolean getImages(@NonNull String query, int page);
 
 
 	boolean isCached();
 
 
 	void clearCache();
+
+	void bindCallback(GetImagesCallback callback);
+
+	void unBindCallback();
 
 }

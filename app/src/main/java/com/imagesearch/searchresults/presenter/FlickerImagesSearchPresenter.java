@@ -1,5 +1,7 @@
 package com.imagesearch.searchresults.presenter;
 
+import android.util.Log;
+
 import com.imagesearch.searchresults.model.data.ImageData;
 
 import java.util.List;
@@ -46,7 +48,12 @@ public class FlickerImagesSearchPresenter implements PresenterImagesRepositoryCo
 				view.onImagesNotFound();
 			else
 				view.onImagesLoaded(images);
+
+			Log.d("callback", " callback: " + this + " view != null, count: " + images.size());
+
 		}
+		else
+			Log.d("callback", " callback: " + this + " view == null");
 	}
 
 
@@ -66,17 +73,17 @@ public class FlickerImagesSearchPresenter implements PresenterImagesRepositoryCo
 	 */
 	@Override
 	public void getImages(String query, int page){
-		if (imagesRepository.getImages(query, page, this)){
+		if (imagesRepository.getImages(query, page)){
 			if (view != null)
 				view.showLoadingImagesProgressIndicator();
-
-	//		recentSearchRepository.onNewQuery(query);
 		}
 	}
+
 
 	@Override
 	public void bind(FlickerImagesPresenterViewContract.View view){
 		this.view = view;
+		this.imagesRepository.bindCallback(this);
 	}
 
 
@@ -86,6 +93,7 @@ public class FlickerImagesSearchPresenter implements PresenterImagesRepositoryCo
 			imagesRepository.clearCache();
 
 		this.view = null;
+		this.imagesRepository.unBindCallback();
 	}
 
 

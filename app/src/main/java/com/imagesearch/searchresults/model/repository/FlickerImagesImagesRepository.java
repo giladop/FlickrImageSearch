@@ -1,6 +1,7 @@
 package com.imagesearch.searchresults.model.repository;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.imagesearch.searchresults.model.data.ImageData;
 import com.imagesearch.searchresults.model.data.ImagesData;
@@ -50,6 +51,12 @@ public class FlickerImagesImagesRepository implements PresenterImagesRepositoryC
 	private List<ImageData> imagesCache = new ArrayList<>();
 
 
+	private boolean isQuering;
+
+
+
+	private GetImagesCallback callback;
+
 
 	@Inject
 	public FlickerImagesImagesRepository(RemoteRepository remoteRepository){
@@ -62,24 +69,30 @@ public class FlickerImagesImagesRepository implements PresenterImagesRepositoryC
 	 * A boolean indication is return indicating a long operation.
 	 */
 	@Override
-	public boolean getImages(@NonNull final String query, final int page, @NonNull final GetImagesCallback callback){
+	public boolean getImages(@NonNull final String query, final int page){
+
+		Log.d("callback", "getImages() query: " + query + " ,page: "  + page  + " callback: " + callback + ", isQuering = " + isQuering + " , repository = " + this);
 
 		// check if in cache
 		if (isCachedData(query, page)){
+			Log.d("callback", "return cache to callback: " + callback + ", imagesCache = " + imagesCache.size());
 			callback.onImagesLoaded(imagesCache);
 			return false;
 		}
 
+
+
 		// clear cache if new query
 		if ((lastQuery != null && !lastQuery.equals(query)) || page == 1){
+			Log.d("callback", "clear cache");
 			imagesCache.clear();
 		}
 
-		//store last query/page
-		lastQuery = query;
-		lastPage = page;
+
 
 		//fetch images from remote API.
+		Log.d("callback", "fetch images");
+		isQuering = true;
 		remoteRepository.getImages(query, page)
 			.observeOn(AndroidSchedulers.mainThread())
 			.subscribeWith( new DisposableObserver<List<ImageData>>(){
@@ -87,16 +100,24 @@ public class FlickerImagesImagesRepository implements PresenterImagesRepositoryC
 				@Override
 				public void onNext(List<ImageData> imagesData){
 					imagesCache.addAll(imagesData);
-					callback.onImagesLoaded(imagesData);
+					//store last query/page
+					lastQuery = query;
+					lastPage = page;
+
+					if (callback != null)
+						callback.onImagesLoaded(imagesData);
 				}
 
 				@Override
 				public void onError(Throwable e){
-					callback.onImagesNotAvailable();
+					if (callback != null)
+						callback.onImagesNotAvailable();
 				}
 
 				@Override
 				public void onComplete(){
+					isQuering = false;
+	//				Log.d("callback", "after: " + callback);
 					callback.onImagesLoaded(new ArrayList<>());
 				}
 			}
@@ -118,12 +139,26 @@ public class FlickerImagesImagesRepository implements PresenterImagesRepositoryC
 		lastPage = 0;
 	}
 
+	@Override
+	public void bindCallback(GetImagesCallback callback){
+		this.callback = callback;
+	}
+
+	@Override
+	public void unBindCallback(){
+		this.callback = null;
+	}
+
 
 	/**
 	 * Check if data was already fetched for this query+page request.
 	 */
 	private boolean isCachedData(@NonNull String newQuery, int newPage){
+		if (isQuering) return true;
+
 		if (lastQuery == null || imagesCache.isEmpty()) return false;
+
+		//if (lastQuery.equals(newQuery) && isQuering) return true;
 
 		return lastQuery.equals(newQuery) && lastPage == newPage;
 	}

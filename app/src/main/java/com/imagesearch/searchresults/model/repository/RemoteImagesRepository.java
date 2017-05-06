@@ -1,5 +1,6 @@
 package com.imagesearch.searchresults.model.repository;
 
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 
 import com.imagesearch.searchresults.model.api.FlickerApi;
@@ -42,6 +43,13 @@ public class RemoteImagesRepository implements RemoteRepository{
 				.map(res -> res.imagesData.images)
 				.flatMapIterable(images -> images)
 				.buffer(3);
+
+//		return api.getImages(query, page)
+//				.subscribeOn(Schedulers.io())
+//				.doOnNext(a -> {
+//					Thread.sleep(5000);})
+//				.map(res -> res.imagesData.images);
+
 	}
 
 }
