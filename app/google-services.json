@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "557267759981",
+    "firebase_url": "https://imagessearch-8c42f.firebaseio.com",
+    "project_id": "imagessearch-8c42f",
+    "storage_bucket": "imagessearch-8c42f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557267759981:android:0434796bca29ad65",
+        "android_client_info": {
+          "package_name": "com.imagesearch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "557267759981-igi1t04dphnilmnaoth84qudo7frjec9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDele93QauHRHdokYYSXd49URlHXEyVtec"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
