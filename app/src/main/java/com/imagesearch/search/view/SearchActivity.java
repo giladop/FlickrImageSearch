@@ -1,6 +1,9 @@
 package com.imagesearch.search.view;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.*;
@@ -170,6 +173,11 @@ public class SearchActivity extends AppCompatActivity
 	public void onFabClicked(){
 		if (searchView.getQuery().length() > 0)
 			invokeSearch(searchView.getQuery().toString());
+	}
+
+
+	public static Intent createStartIntent(@NonNull Context context){
+		return new Intent(context, SearchActivity.class);
 	}
 
 

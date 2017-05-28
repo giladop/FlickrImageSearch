@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.imagesearch.db.LikesRepository;
+import com.imagesearch.db.LikesRepositoryContract;
 import com.imagesearch.search.presenter.PresenterRecentSearchContract;
 import com.imagesearch.searchresults.presenter.PresenterImagesRepositoryContract;
 import com.squareup.picasso.Picasso;
@@ -28,21 +30,16 @@ public interface AppComponent{
 	Gson gson();
 
 
-	Retrofit retrofit();
-
-
 	Context context();
 
 
 	Picasso picasso();
 
 
-	SharedPreferences sharedPreferences();
-
-
 	PresenterImagesRepositoryContract PresenterImagesRepositoryContract();
 
 
 	PresenterRecentSearchContract PresenterRecentSearchContract();
+
 
 }

@@ -28,6 +28,12 @@
 			android:name=".search.view.SearchActivity"
 			android:label="@string/title_activity_search"
 			android:theme="@style/AppTheme.NoActionBar">
+		</activity>
+		<activity
+			android:name=".home.HomeActivity"
+			android:label="@string/image_search"
+			android:theme="@style/AppTheme.NoActionBar">
+
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 

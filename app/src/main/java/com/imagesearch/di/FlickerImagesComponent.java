@@ -1,7 +1,7 @@
 package com.imagesearch.di;
 
+import com.imagesearch.home.HomeActivity;
 import com.imagesearch.search.view.SearchActivity;
-import com.imagesearch.searchresults.presenter.FlickerImagesSearchPresenter;
 import com.imagesearch.searchresults.view.FullScreenImageActivity;
 import com.imagesearch.searchresults.view.SearchResultsActivity;
 
@@ -27,6 +27,9 @@ public interface FlickerImagesComponent{
 
 
 	void inject(SearchActivity activity);
+
+
+	void inject(HomeActivity activity);
 
 
 }

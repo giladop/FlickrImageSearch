@@ -154,11 +154,11 @@ public class FlickerImagesImagesRepository implements PresenterImagesRepositoryC
 	 * Check if data was already fetched for this query+page request.
 	 */
 	private boolean isCachedData(@NonNull String newQuery, int newPage){
-		if (isQuering) return true;
+		if (isQuering && lastQuery.equals(newQuery)) return true;
 
 		if (lastQuery == null || imagesCache.isEmpty()) return false;
 
-		//if (lastQuery.equals(newQuery) && isQuering) return true;
+		//if ( && isQuering) return true;
 
 		return lastQuery.equals(newQuery) && lastPage == newPage;
 	}

@@ -3,8 +3,12 @@ package com.imagesearch.di;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.imagesearch.db.LikesRepository;
+import com.imagesearch.db.LikesRepositoryContract;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.picasso.Picasso;
 
@@ -75,5 +79,13 @@ public class AppModule{
 	SharedPreferences provideSharedPreferences(Context context){
 		return context.getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
 	}
+
+
+	@Provides
+	@Singleton
+	LikesRepositoryContract providesLikesRepository(){
+		return new LikesRepository(FirebaseAuth.getInstance(), FirebaseDatabase.getInstance().getReference());
+	}
+
 
 }

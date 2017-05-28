@@ -99,4 +99,12 @@
 	<string name="dummy_content">DUMMY\nCONTENT</string>
 	<string name="no_images_found">No images found</string>
 	<string name="title_activity_search">SearchActivity</string>
+	<string name="title_activity_home">HomeActivity</string>
+
+	<string name="navigation_drawer_open">Open navigation drawer</string>
+	<string name="navigation_drawer_close">Close navigation drawer</string>
+	<string name="sign_in">Sign-In</string>
+	<string name="sign_out">Sign-Out</string>
+	<string name="default_user_name">Moby Dick</string>
+	<string name="image_search">Images Search</string>
 </resources>

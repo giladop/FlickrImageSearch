@@ -140,7 +140,8 @@ public class SearchResultsActivity extends AppCompatActivity
 	 * Start full screen image activity with transition animation.
 	 */
 	private void openFullScreenImageView(ImageData imageData, ImageView imageView){
-		Intent startIntent = FullScreenImageActivity.newIntent(this, imageData);
+		String query = getIntent().getStringExtra(QUERY_EXTRA);
+		Intent startIntent = FullScreenImageActivity.newIntent(this, imageData, query);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
 			Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(
 					this,

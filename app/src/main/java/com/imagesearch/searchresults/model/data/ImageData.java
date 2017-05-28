@@ -3,7 +3,11 @@ package com.imagesearch.searchresults.model.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.Exclude;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 
@@ -16,42 +20,59 @@ public class ImageData implements Parcelable{
 
 
 	@SerializedName("id")
-	public String id;
+	private String id;
 
 
 	@SerializedName("secret")
-	public String secret;
+	private String secret;
 
 
 	@SerializedName("server")
-	public String server;
+	private String server;
 
 
 	@SerializedName("farm")
-	public String farm;
+	private String farm;
 
 
 	@SerializedName("title")
-	public String title;
+	private String title;
 
 
-	/**
-	 * Return the image url.
-	 */
-	public String getImageUrl(){
-		return "http://farm" + farm + ".static.flickr.com/" + server + "/" + id + "_" + secret + ".jpg";
+	private int totalLikes;
+
+
+	private Map<String, Boolean> likes = new HashMap<>();
+
+
+	public ImageData(){
 	}
 
-
-	// Parcelable implementation
 	protected ImageData(Parcel in){
 		id = in.readString();
 		secret = in.readString();
 		server = in.readString();
 		farm = in.readString();
 		title = in.readString();
+		totalLikes = in.readInt();
 	}
 
+
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags){
+		dest.writeString(id);
+		dest.writeString(secret);
+		dest.writeString(server);
+		dest.writeString(farm);
+		dest.writeString(title);
+		dest.writeInt(totalLikes);
+	}
+
+	@Override
+	public int describeContents(){
+		return 0;
+	}
 
 	public static final Creator<ImageData> CREATOR = new Creator<ImageData>(){
 		@Override
@@ -65,20 +86,61 @@ public class ImageData implements Parcelable{
 		}
 	};
 
-
-	@Override
-	public int describeContents(){
-		return 0;
+	public String getId(){
+		return id;
 	}
 
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags){
-		dest.writeString(id);
-		dest.writeString(secret);
-		dest.writeString(server);
-		dest.writeString(farm);
-		dest.writeString(title);
+	public String getTitle(){
+		return title;
 	}
 
+
+	public void like(String id){
+		totalLikes++;
+		likes.put(id, true);
+	}
+
+
+	public void unLike(String id){
+		if (likes.containsKey(id)){
+			totalLikes--;
+			likes.remove(id);
+		}
+	}
+
+
+	public int getTotalLikes(){
+		return totalLikes;
+	}
+
+
+
+
+	/**
+	 * Return the image url.
+	 */
+	public String getImageUrl(){
+		return "http://farm" + farm + ".static.flickr.com/" + server + "/" + id + "_" + secret + ".jpg";
+	}
+
+
+	@Exclude
+	public Map<String, Object> toMap() {
+		HashMap<String, Object> result = new HashMap<>();
+		result.put("id", id);
+		result.put("secret", secret);
+		result.put("title", title);
+		result.put("server", server);
+		result.put("farm", farm);
+		result.put("title", title);
+		result.put("totalLikes", totalLikes);
+		result.put("likes", likes);
+		return result;
+	}
+
+
+	public Map<String, Boolean> getLikes(){
+		return likes;
+	}
 }
