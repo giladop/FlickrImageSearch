@@ -1,5 +1,6 @@
 package com.imagesearch.db;
 
+import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.imagesearch.searchresults.model.data.ImageData;
@@ -11,18 +12,20 @@ import java.util.List;
 /**
  * Created by giladopher on 10/05/2017.
  */
-
 public interface LikesRepositoryContract{
 
 
 	interface LikesCallBack{
 
 
-		void onLikesLoaded(List<ImageData> images);
+		void onLikesLoaded(LiveData<List<ImageData>> images);
+
+
+		void onLikesLoadedFailed();
 
 	}
 
-	void getUserLike(@NonNull String userId, @NonNull LikesCallBack callBack);
+	LiveData<List<ImageData>> getUserLike(@NonNull String userIds);
 
 
 	void getAllLikes(@NonNull LikesCallBack callBack);

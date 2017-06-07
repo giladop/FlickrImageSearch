@@ -2,14 +2,13 @@ package com.imagesearch.search.presenter;
 
 import android.support.annotation.NonNull;
 
-import com.imagesearch.searchresults.presenter.FlickerImagesSearchPresenter;
 
 import java.util.List;
 
 
 
 /**
- * The contract between {@link FlickerImagesSearchPresenter} and recent search repository.
+ * The contract between {@link } and recent search repository.
  *
  * @author Gilad Opher
  */

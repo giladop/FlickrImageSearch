@@ -45,10 +45,6 @@ public class FullScreenImageActivity extends AppCompatActivity{
 
 
 
-	private static final String CATEGORY_EXTRA = "category_extra";
-
-
-
 	@Inject
 	Picasso picasso;
 
@@ -254,10 +250,9 @@ public class FullScreenImageActivity extends AppCompatActivity{
 	/**
 	 * Create starting {@link Intent}
 	 */
-	public static Intent newIntent(@NonNull Context context, @NonNull ImageData imageData, @NonNull String category){
+	public static Intent newIntent(@NonNull Context context, @NonNull ImageData imageData){
 		Intent intent = new Intent(context, FullScreenImageActivity.class);
 		intent.putExtra(IMAGE_DATA_EXTRA, imageData);
-		intent.putExtra(CATEGORY_EXTRA, category);
 		return intent;
 	}
 

@@ -6,11 +6,7 @@ import com.google.gson.Gson;
 import com.imagesearch.search.model.repository.RecentSearchesRepository;
 import com.imagesearch.search.presenter.PresenterRecentSearchContract;
 import com.imagesearch.searchresults.model.api.FlickerApi;
-import com.imagesearch.searchresults.model.repository.FlickerImagesImagesRepository;
-import com.imagesearch.searchresults.model.repository.RemoteImagesRepository;
-import com.imagesearch.searchresults.model.repository.RemoteRepository;
-import com.imagesearch.searchresults.presenter.PresenterImagesRepositoryContract;
-
+import com.imagesearch.searchresults.model.repository.*;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -39,15 +35,20 @@ public class RepositoryModule{
 
 
 	@Provides
+	ImageRepositoryCache provideImageRepositoryCache(){
+		return new ImageRepositoryCache();
+	}
+
+
+	@Provides
 	PresenterRecentSearchContract providePresenterRecentSearchContract(SharedPreferences prefs, Gson gson){
 		return new RecentSearchesRepository(prefs, gson);
 	}
 
+
 	@Provides
 	@Singleton
-	PresenterImagesRepositoryContract provideFlickerImagesRepository(RemoteRepository remoteRepository){
-		return new FlickerImagesImagesRepository(remoteRepository);
+	ImagesRepository providesImagesRepository(RemoteRepository remoteRepository, ImageRepositoryCache imageRepositoryCache){
+		return new ImagesRepositoryImpl(remoteRepository, imageRepositoryCache);
 	}
-
-
 }

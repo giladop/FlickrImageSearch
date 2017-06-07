@@ -26,7 +26,7 @@ import butterknife.ButterKnife;
  *
  * @author Gilad Opher
  */
-class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
+public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
 
 
 	/**
@@ -47,16 +47,27 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
 	private int total = 0;
 
 
+
 	/**
 	 * A callback allowing delegate image click backwards to {@link SearchResultsActivity}.
 	 */
 	private ImagesCallback imagesCallback;
 
 
-	ImagesAdapter(Context context, ImagesCallback imagesCallback){
+
+	private boolean grid;
+
+
+	public ImagesAdapter(Context context, ImagesCallback imagesCallback){
+		this(context, imagesCallback, true);
+	}
+
+
+	public ImagesAdapter(Context context, ImagesCallback imagesCallback, boolean grid){
 		this.images = new ArrayList<>();
 		this.picasso = FlickerImageSearchApplication.getFlickerImageSearchApplication().getAppComponent().picasso();
 		this.imagesCallback = imagesCallback;
+		this.grid = grid;
 	}
 
 
@@ -67,6 +78,18 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
 
 		Log.d("callback", "total: " + total);
 
+
+		images.addAll(newImages);
+		notifyItemRangeInserted(total, newImages.size());
+		total = total + newImages.size();
+	}
+
+
+
+	/**
+	 * Add more images to list.
+	 */
+	public void setImages(List<ImageData> newImages){
 
 		images.addAll(newImages);
 		notifyItemRangeInserted(total, newImages.size());
@@ -113,7 +136,7 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
 
 	@Override
 	public ImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_cell_layout, parent, false);
+		View view = LayoutInflater.from(parent.getContext()).inflate(grid ? R.layout.image_cell_layout : R.layout.image_linear_cell_layout, parent, false);
 		view.setOnClickListener(clickListener);
 		ImageViewHolder holder = new ImageViewHolder(view);
 		view.setTag(holder);
@@ -122,11 +145,15 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
 	}
 
 
+
 	@Override
 	public void onBindViewHolder(ImageViewHolder holder, int position){
 		ImageData imageData = images.get(position);
+
+		Log.d("ImagesAdapter", "image url: " + imageData.getImageUrl());
 		picasso.load(imageData.getImageUrl()).into(holder.imageView);
 	}
+
 
 
 	@Override
@@ -158,7 +185,7 @@ class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>{
 	/**
 	 * A callback for external use
 	 */
-	interface ImagesCallback{
+	public interface ImagesCallback{
 
 
 		/**

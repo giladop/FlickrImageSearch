@@ -19,6 +19,11 @@ import java.util.Map;
 public class ImageData implements Parcelable{
 
 
+	@SerializedName("farm")
+	private String farm;
+
+
+
 	@SerializedName("id")
 	private String id;
 
@@ -30,9 +35,6 @@ public class ImageData implements Parcelable{
 	@SerializedName("server")
 	private String server;
 
-
-	@SerializedName("farm")
-	private String farm;
 
 
 	@SerializedName("title")
@@ -49,10 +51,10 @@ public class ImageData implements Parcelable{
 	}
 
 	protected ImageData(Parcel in){
+		farm = in.readString();
 		id = in.readString();
 		secret = in.readString();
 		server = in.readString();
-		farm = in.readString();
 		title = in.readString();
 		totalLikes = in.readInt();
 	}
@@ -61,10 +63,10 @@ public class ImageData implements Parcelable{
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags){
+		dest.writeString(farm);
 		dest.writeString(id);
 		dest.writeString(secret);
 		dest.writeString(server);
-		dest.writeString(farm);
 		dest.writeString(title);
 		dest.writeInt(totalLikes);
 	}
@@ -95,6 +97,18 @@ public class ImageData implements Parcelable{
 		return title;
 	}
 
+
+	public void setSecret(String secret){
+		this.secret = secret;
+	}
+
+	public void setServer(String server){
+		this.server = server;
+	}
+
+	public void setFarm(String farm){
+		this.farm = farm;
+	}
 
 	public void like(String id){
 		totalLikes++;
@@ -128,11 +142,10 @@ public class ImageData implements Parcelable{
 	@Exclude
 	public Map<String, Object> toMap() {
 		HashMap<String, Object> result = new HashMap<>();
+		result.put("farm", farm);
 		result.put("id", id);
 		result.put("secret", secret);
-		result.put("title", title);
 		result.put("server", server);
-		result.put("farm", farm);
 		result.put("title", title);
 		result.put("totalLikes", totalLikes);
 		result.put("likes", likes);

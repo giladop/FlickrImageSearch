@@ -1,7 +1,9 @@
 package com.imagesearch.home;
 
+import android.app.ActivityOptions;
+import android.arch.lifecycle.LifecycleActivity;
 import android.content.Intent;
-import android.os.Bundle;
+import android.os.*;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -9,7 +11,8 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -25,19 +28,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.*;
-import com.google.firebase.database.*;
 import com.imagesearch.FlickerImageSearchApplication;
 import com.imagesearch.R;
 import com.imagesearch.di.DaggerFlickerImagesComponent;
 import com.imagesearch.di.FlickerImagesComponent;
 import com.imagesearch.di.FlickerImagesModule;
 import com.imagesearch.search.view.SearchActivity;
+import com.imagesearch.searchresults.model.data.ImageData;
+import com.imagesearch.searchresults.view.FullScreenImageActivity;
+import com.imagesearch.searchresults.view.ImagesAdapter;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -46,7 +49,7 @@ import butterknife.ButterKnife;
 
 
 
-public class HomeActivity extends AppCompatActivity
+public class HomeActivity extends LifecycleActivity
 		implements NavigationView.OnNavigationItemSelectedListener,
 		GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
 
@@ -57,13 +60,16 @@ public class HomeActivity extends AppCompatActivity
 	private static final String TAG = "HomeActivity";
 
 
+
+	private static final String BUNDLE_RECYCLER_LAYOUT = "home.activity.recycler.layout";
+
+
+
 	private GoogleApiClient mGoogleApiClient;
 
 
 	private FirebaseAuth mFirebaseAuth;
 
-
-	private DatabaseReference db;
 
 
 	@BindView(R.id.toolbar)
@@ -72,6 +78,11 @@ public class HomeActivity extends AppCompatActivity
 
 	@BindView(R.id.nav_view)
 	NavigationView navigationView;
+
+
+	@BindView(R.id.images_list)
+	RecyclerView imagesList;
+
 
 
 //	@BindView(R.id.userImage)
@@ -89,8 +100,20 @@ public class HomeActivity extends AppCompatActivity
 	TextView signInSignOut;
 
 
+
+
 	@Inject
 	Picasso picasso;
+
+
+
+	@Inject
+	FavoritesViewModel favoritesViewModel;
+
+
+
+	private ImagesAdapter imagesAdapter;
+
 
 
 	/**
@@ -113,19 +136,12 @@ public class HomeActivity extends AppCompatActivity
 		ButterKnife.bind(this);
 		inject();
 
-		setSupportActionBar(toolbar);
-
 		View headerView = navigationView.inflateHeaderView(R.layout.nav_header_home);
 		userImage = (ImageView)headerView.findViewById(R.id.userImage);
 		userName = (TextView)headerView.findViewById(R.id.userName);
 		userEmail = (TextView)headerView.findViewById(R.id.userEmail);
 		signInSignOut = (TextView)headerView.findViewById(R.id.signInSignOut);
-		signInSignOut.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				signInOrSignOut();
-			}
-		});
+		signInSignOut.setOnClickListener(v -> signInOrSignOut());
 
 		FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
 		fab.setOnClickListener(view -> startActivity(SearchActivity.createStartIntent(HomeActivity.this)));
@@ -133,7 +149,7 @@ public class HomeActivity extends AppCompatActivity
 		DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
 				this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-		drawer.setDrawerListener(toggle);
+		drawer.addDrawerListener(toggle);
 		toggle.syncState();
 
 		NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
@@ -143,18 +159,26 @@ public class HomeActivity extends AppCompatActivity
 
 		// Initialize FirebaseAuth
 		mFirebaseAuth = FirebaseAuth.getInstance();
-		db = FirebaseDatabase.getInstance().getReference();
-	}
 
+		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+		imagesList.setLayoutManager(linearLayoutManager);
 
-	@Override
-	protected void onStart(){
-		super.onStart();
+		if (savedInstanceState != null){
+			Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+			imagesList.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+		}
+
 		setupUser(mFirebaseAuth.getCurrentUser());
 	}
 
 
+	@Override
+	public void onSaveInstanceState(Bundle outState){
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, imagesList.getLayoutManager().onSaveInstanceState());
+	}
 
+	
 	private void signInOrSignOut(){
 		if (mFirebaseAuth.getCurrentUser() == null)
 			signIn();
@@ -164,13 +188,10 @@ public class HomeActivity extends AppCompatActivity
 
 
 	private void signOut(){
-		Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>(){
-			@Override
-			public void onResult(@NonNull Status status){
-				if (status.isSuccess()){
-					mFirebaseAuth.signOut();
-					setupUser(null);
-				}
+		Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(status -> {
+			if (status.isSuccess()){
+				mFirebaseAuth.signOut();
+				setupUser(null);
 			}
 		});
 	}
@@ -188,31 +209,43 @@ public class HomeActivity extends AppCompatActivity
 			userName.setText(currentUser.getDisplayName());
 			userEmail.setText(currentUser.getEmail());
 			signInSignOut.setText(R.string.sign_out);
-			getFavorites();
+
+			favoritesViewModel.init(currentUser.getUid());
+			favoritesViewModel.getFavoritesImage().observe(this, this::setupFavoritesImages);
+
 		}
 
 
 	}
 
-	private void getFavorites(){
-		ValueEventListener postListener = new ValueEventListener() {
-			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
-				// Get Post object and use the values to update the UI
-				Favorites favorites = dataSnapshot.getValue(Favorites.class);
-				Log.d("stop", "stop");
-				// ...
-			}
+	private void setupFavoritesImages(List<ImageData> imagesData){
+		if (imagesAdapter == null){
+			imagesAdapter = new ImagesAdapter(this, this::openFullScreenImageView, false);
+			imagesList.setAdapter(imagesAdapter);
+		}
 
-			@Override
-			public void onCancelled(DatabaseError databaseError) {
-				// Getting Post failed, log a message
-				Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-				// ...
-			}
-		};
-		db.addValueEventListener(postListener);
+		imagesAdapter.setImages(imagesData);
+
 	}
+
+
+
+	/**
+	 * Start full screen image activity with transition animation.
+	 */
+	private void openFullScreenImageView(ImageData imageData, ImageView imageView){
+		Intent startIntent = FullScreenImageActivity.newIntent(this, imageData);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+			Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(
+					this,
+					imageView,
+					"transition_photo")
+					.toBundle();
+			startActivity(startIntent, bundle);
+		}else
+			startActivity(startIntent);
+	}
+
 
 
 	private void setup(){
@@ -255,24 +288,21 @@ public class HomeActivity extends AppCompatActivity
 		Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 		AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
 		mFirebaseAuth.signInWithCredential(credential)
-				.addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-					@Override
-					public void onComplete(@NonNull Task<AuthResult> task) {
-						Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+				.addOnCompleteListener(this, task -> {
+					Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
-						// If sign in fails, display a message to the user. If sign in succeeds
-						// the auth state listener will be notified and logic to handle the
-						// signed in user can be handled in the listener.
-						if (!task.isSuccessful()) {
-							Log.w(TAG, "signInWithCredential", task.getException());
-							Toast.makeText(HomeActivity.this, "Authentication failed.",
-									Toast.LENGTH_SHORT).show();
-						} else {
-							Toast.makeText(HomeActivity.this, "Authentication successed.",
-									Toast.LENGTH_SHORT).show();
+					// If sign in fails, display a message to the user. If sign in succeeds
+					// the auth state listener will be notified and logic to handle the
+					// signed in user can be handled in the listener.
+					if (!task.isSuccessful()) {
+						Log.w(TAG, "signInWithCredential", task.getException());
+						Toast.makeText(HomeActivity.this, "Authentication failed.",
+								Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(HomeActivity.this, "Authentication successed.",
+								Toast.LENGTH_SHORT).show();
 
-							setupUser(mFirebaseAuth.getCurrentUser());
-						}
+						setupUser(mFirebaseAuth.getCurrentUser());
 					}
 				});
 	}
@@ -312,7 +342,7 @@ public class HomeActivity extends AppCompatActivity
 
 	@SuppressWarnings("StatementWithEmptyBody")
 	@Override
-	public boolean onNavigationItemSelected(MenuItem item){
+	public boolean onNavigationItemSelected(@NonNull MenuItem item){
 		// Handle navigation view item clicks here.
 		int id = item.getItemId();
 

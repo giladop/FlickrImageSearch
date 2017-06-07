@@ -3,8 +3,6 @@ package com.imagesearch.di;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.imagesearch.db.LikesRepository;
@@ -84,7 +82,7 @@ public class AppModule{
 	@Provides
 	@Singleton
 	LikesRepositoryContract providesLikesRepository(){
-		return new LikesRepository(FirebaseAuth.getInstance(), FirebaseDatabase.getInstance().getReference());
+		return new LikesRepository();
 	}
 
 

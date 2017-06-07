@@ -2,15 +2,17 @@ package com.imagesearch.searchresults.view;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.arch.lifecycle.LifecycleActivity;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -23,8 +25,6 @@ import com.imagesearch.di.DaggerFlickerImagesComponent;
 import com.imagesearch.di.FlickerImagesComponent;
 import com.imagesearch.di.FlickerImagesModule;
 import com.imagesearch.searchresults.model.data.ImageData;
-import com.imagesearch.searchresults.presenter.FlickerImagesPresenterViewContract;
-import com.imagesearch.searchresults.presenter.FlickerImagesSearchPresenter;
 
 import java.util.List;
 
@@ -40,8 +40,10 @@ import butterknife.ButterKnife;
  * For simplify the activity hosts both search and list fragments and delegate actions/data to proper fragment.
  *
  */
-public class SearchResultsActivity extends AppCompatActivity
-		implements FlickerImagesPresenterViewContract.View{
+public class SearchResultsActivity extends LifecycleActivity {
+
+
+	private static final String BUNDLE_RECYCLER_LAYOUT = "search.result.activity.recycler.layout";
 
 
 	private static final String QUERY_EXTRA = "queryExtra";
@@ -50,6 +52,8 @@ public class SearchResultsActivity extends AppCompatActivity
 	@BindView(R.id.root)
 	View view;
 
+	@BindView(R.id.toolbar)
+	Toolbar toolbar;
 
 	@BindView(R.id.swipe_refresh_layout)
 	SwipeRefreshLayout swipeRefreshLayout;
@@ -57,10 +61,6 @@ public class SearchResultsActivity extends AppCompatActivity
 
 	@BindView(R.id.images_list)
 	RecyclerView imagesList;
-
-
-	@BindView(R.id.toolbar)
-	Toolbar toolbar;
 
 
 	@BindView(R.id.fab)
@@ -79,13 +79,11 @@ public class SearchResultsActivity extends AppCompatActivity
 	private int currentPage;
 
 
+	private ViewModelObserver observer = new ViewModelObserver();
 
-	/**
-	 * This is the PRESENTER in MVP pattern. For simplify,
-	 * the presenter handles/manages both search and list views.
-	 */
+
 	@Inject
-	FlickerImagesSearchPresenter flickerImagesSearchPresenter;
+	SearchResultsViewModel searchResultsViewModel;
 
 
 	@Override
@@ -95,10 +93,7 @@ public class SearchResultsActivity extends AppCompatActivity
 		ButterKnife.bind(this);
 		inject();
 
-		Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-
-		setTitle(getIntent().getStringExtra(QUERY_EXTRA));
+		toolbar.setTitle(getIntent().getStringExtra(QUERY_EXTRA));
 		GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
 		final EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
 			@Override
@@ -124,14 +119,17 @@ public class SearchResultsActivity extends AppCompatActivity
 		if (savedInstanceState != null){
 			currentPage = savedInstanceState.getInt("page");
 			scrollListener.setCurrentPage(currentPage);
+			Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+			imagesList.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
 		}else{
 			currentPage = 1;
 		}
 
 		fab.setOnClickListener(v -> finish());
 
-		flickerImagesSearchPresenter.bind(this);
+	//	flickerImagesSearchPresenter.bind(this);
 		loadMore();
+
 	}
 
 
@@ -140,8 +138,7 @@ public class SearchResultsActivity extends AppCompatActivity
 	 * Start full screen image activity with transition animation.
 	 */
 	private void openFullScreenImageView(ImageData imageData, ImageView imageView){
-		String query = getIntent().getStringExtra(QUERY_EXTRA);
-		Intent startIntent = FullScreenImageActivity.newIntent(this, imageData, query);
+		Intent startIntent = FullScreenImageActivity.newIntent(this, imageData);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
 			Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(
 					this,
@@ -156,33 +153,15 @@ public class SearchResultsActivity extends AppCompatActivity
 
 
 	/**
-	 * Save {@link FlickerImagesSearchPresenter}.
+	 * Save page and layout manager.
 	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState){
-		outState.putInt("page", currentPage);
 		super.onSaveInstanceState(outState);
+		outState.putInt("page", currentPage);
+		outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, imagesList.getLayoutManager().onSaveInstanceState());
 	}
 
-
-	/**
-	 * Bind view (this) with presenter.
-	 */
-	@Override
-	protected void onStart(){
-		super.onStart();
-		flickerImagesSearchPresenter.bind(this);
-	}
-
-
-	/**
-	 * Un-Bind view (this) from presenter.
-	 */
-	@Override
-	protected void onStop(){
-		super.onStop();
-		flickerImagesSearchPresenter.unbind(isFinishing());
-	}
 
 
 	/**
@@ -198,37 +177,26 @@ public class SearchResultsActivity extends AppCompatActivity
 	}
 
 
-	@Override
-	public void showLoadingImagesProgressIndicator(){
-		if (!swipeRefreshLayout.isRefreshing())
-			swipeRefreshLayout.setRefreshing(true);
-	}
-
-
-	@Override
-	public void hideLoadingImagesProgressIndicator(){
-		swipeRefreshLayout.setRefreshing(false);
-	}
-
-
-	@Override
-	public void onImagesLoaded(List<ImageData> images){
-		imagesAdapter.addImages(images);
-	}
-
-
-
-
-	@Override
-	public void onImagesNotFound(){
-		Snackbar.make(view, R.string.no_images_found, Snackbar.LENGTH_LONG).show();
-	}
-
-
 
 	private void loadMore(){
 		String query = getIntent().getStringExtra(QUERY_EXTRA);
-		flickerImagesSearchPresenter.getImages(query, currentPage);
+		//flickerImagesSearchPresenter.getImages(query, currentPage);
+
+		swipeRefreshLayout.setRefreshing(true);
+		searchResultsViewModel.loadMore(query, currentPage).observe(this, observer);
+	}
+
+
+
+	private class ViewModelObserver implements Observer<List<ImageData>>{
+
+
+
+		@Override
+		public void onChanged(@Nullable List<ImageData> imageData){
+			swipeRefreshLayout.setRefreshing(false);
+			imagesAdapter.addImages(imageData);
+		}
 	}
 
 
