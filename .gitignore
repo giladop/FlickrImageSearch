@@ -1,0 +1,12 @@
+
+*.bin
+
+*.bin
+
+build/intermediates/project-cache/c94e410d1b9139d32dde9f3ee04dff79e48fb2d6/output
+
+.gradle/4.0-milestone-1/fileChanges/last-build.bin
+
+*.lock
+
+.gradle/4.0-milestone-1/fileContent/fileContent.lock

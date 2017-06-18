@@ -11,12 +11,15 @@ import java.util.List;
 
 
 /**
+ * A simple 3 time base cache
+ *
  * Created by giladopher on 05/06/2017.
  */
 public class ImageRepositoryCache{
 
 
-	private final long CACHE_EXPIRATION_TIME = DateUtils.MINUTE_IN_MILLIS * 3;
+	private static final long CACHE_EXPIRATION_TIME = DateUtils.MINUTE_IN_MILLIS * 3;
+
 
 
 	private long cacheTime;
@@ -36,31 +39,30 @@ public class ImageRepositoryCache{
 	}
 
 
-	public boolean isCached(@NonNull String query, int page){
-		if (!query.equals(this.query)){
-			clearCache();
-			return false;
-		}
-		if (System.currentTimeMillis() > cacheTime + CACHE_EXPIRATION_TIME)
-			return false;
 
+	boolean isCached(@NonNull String query, int page){
+		if (!query.equals(this.query) ||
+			System.currentTimeMillis() > cacheTime + CACHE_EXPIRATION_TIME){
+				clearCache();
+				return false;
+		}
 		return this.page == page;
 	}
 
 
-	public void cache(@NonNull String query, int page, List<ImageData> imags){
+
+	void cache(@NonNull String query, int page, List<ImageData> images){
 		this.query = query;
 		this.page = page;
+		this.cacheTime = System.currentTimeMillis();
 		if (imageDataList == null)
-			imageDataList = new ArrayList<>(imags);
+			imageDataList = new ArrayList<>(images);
 		else
-			imageDataList.addAll(new ArrayList<>(imags));
-
-		cacheTime = System.currentTimeMillis();
+			imageDataList.addAll(new ArrayList<>(images));
 	}
 
 
-	public List<ImageData> getCachedData(){
+	List<ImageData> getCachedData(){
 		return imageDataList;
 	}
 
@@ -73,5 +75,13 @@ public class ImageRepositoryCache{
 	}
 
 
-
+	@Override
+	public String toString(){
+		return "ImageRepositoryCache{" +
+				"cacheTime=" + cacheTime +
+				", query='" + query + '\'' +
+				", page=" + page +
+				", imageDataList=" + imageDataList != null ? String.valueOf(imageDataList.size()) : "0" +
+				'}';
+	}
 }

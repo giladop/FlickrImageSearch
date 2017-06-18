@@ -99,7 +99,7 @@ public class SearchResultsActivity extends LifecycleActivity {
 			@Override
 			public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
 				currentPage = page;
-				loadMore();
+				loadMore(false);
 			}
 		};
 
@@ -107,7 +107,7 @@ public class SearchResultsActivity extends LifecycleActivity {
 			scrollListener.resetState();
 			imagesAdapter.refresh();
 			currentPage = 1;
-			loadMore();
+			loadMore(true);
 		});
 
 		imagesList.setLayoutManager(gridLayoutManager);
@@ -128,7 +128,7 @@ public class SearchResultsActivity extends LifecycleActivity {
 		fab.setOnClickListener(v -> finish());
 
 	//	flickerImagesSearchPresenter.bind(this);
-		loadMore();
+		loadMore(false);
 
 	}
 
@@ -178,12 +178,12 @@ public class SearchResultsActivity extends LifecycleActivity {
 
 
 
-	private void loadMore(){
+	private void loadMore(boolean clearCache){
 		String query = getIntent().getStringExtra(QUERY_EXTRA);
 		//flickerImagesSearchPresenter.getImages(query, currentPage);
 
 		swipeRefreshLayout.setRefreshing(true);
-		searchResultsViewModel.loadMore(query, currentPage).observe(this, observer);
+		searchResultsViewModel.loadMore(query, currentPage, clearCache).observe(this, observer);
 	}
 
 

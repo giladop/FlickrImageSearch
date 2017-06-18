@@ -15,5 +15,7 @@ import java.util.List;
 public interface ImagesRepository{
 
 
-	LiveData<List<ImageData>> getImages(@NonNull String query, int page);
+	LiveData<List<ImageData>> loadMore(@NonNull String query, int page, boolean clearCache);
+
+
 }

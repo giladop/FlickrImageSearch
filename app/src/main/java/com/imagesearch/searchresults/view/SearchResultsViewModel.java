@@ -15,7 +15,6 @@ import javax.inject.Inject;
 /**
  * Created by giladopher on 05/06/2017.
  */
-
 public class SearchResultsViewModel extends ViewModel{
 
 
@@ -30,8 +29,9 @@ public class SearchResultsViewModel extends ViewModel{
 	}
 
 
-	public LiveData<List<ImageData>> loadMore(String query, int page){
-		return repository.getImages(query, page);
+	public LiveData<List<ImageData>> loadMore(String query, int page, boolean clearCache){
+		return repository.loadMore(query, page, clearCache);
+
 	}
 
 
