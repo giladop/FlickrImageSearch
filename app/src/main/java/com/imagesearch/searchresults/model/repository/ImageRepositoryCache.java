@@ -4,10 +4,10 @@ import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 
 import com.imagesearch.searchresults.model.data.ImageData;
+import com.imagesearch.searchresults.model.data.ImagesData;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 /**
@@ -34,6 +34,7 @@ public class ImageRepositoryCache{
 	private List<ImageData> imageDataList;
 
 
+
 	public ImageRepositoryCache(){
 		clearCache();
 	}
@@ -51,23 +52,23 @@ public class ImageRepositoryCache{
 
 
 
-	void cache(@NonNull String query, int page, List<ImageData> images){
+	void cache(@NonNull String query, ImagesData imagesData){
 		this.query = query;
-		this.page = page;
+		this.page = imagesData.page;
 		this.cacheTime = System.currentTimeMillis();
 		if (imageDataList == null)
-			imageDataList = new ArrayList<>(images);
+			this.imageDataList = new ArrayList<>(imagesData.images);
 		else
-			imageDataList.addAll(new ArrayList<>(images));
+			this.imageDataList.addAll(imagesData.images);
 	}
 
 
-	List<ImageData> getCachedData(){
-		return imageDataList;
+	ImagesData getCachedData(){
+		return new ImagesData(page, imageDataList);
 	}
 
 
-	public void clearCache(){
+	void clearCache(){
 		query = null;
 		page = 0;
 		imageDataList = null;
@@ -81,7 +82,6 @@ public class ImageRepositoryCache{
 				"cacheTime=" + cacheTime +
 				", query='" + query + '\'' +
 				", page=" + page +
-				", imageDataList=" + imageDataList != null ? String.valueOf(imageDataList.size()) : "0" +
 				'}';
 	}
 }

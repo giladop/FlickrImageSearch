@@ -14,12 +14,18 @@ import java.util.List;
 public class ImagesData{
 
 
+	@SerializedName("page")
+	public int page;
+
+
+
 	@SerializedName("photo")
 	public List<ImageData> images;
 
 
-	public ImagesData(List<ImageData> images){
+
+	public ImagesData(int page, List<ImageData> images) {
+		this.page = page;
 		this.images = images;
 	}
-
 }

@@ -25,8 +25,7 @@ import com.imagesearch.di.DaggerFlickerImagesComponent;
 import com.imagesearch.di.FlickerImagesComponent;
 import com.imagesearch.di.FlickerImagesModule;
 import com.imagesearch.searchresults.model.data.ImageData;
-
-import java.util.List;
+import com.imagesearch.searchresults.model.data.ImagesData;
 
 import javax.inject.Inject;
 
@@ -79,6 +78,7 @@ public class SearchResultsActivity extends LifecycleActivity {
 	private int currentPage;
 
 
+
 	private ViewModelObserver observer = new ViewModelObserver();
 
 
@@ -98,16 +98,15 @@ public class SearchResultsActivity extends LifecycleActivity {
 		final EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
 			@Override
 			public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-				currentPage = page;
-				loadMore(false);
+				loadMore(page, false);
 			}
 		};
 
 		swipeRefreshLayout.setOnRefreshListener(() -> {
 			scrollListener.resetState();
 			imagesAdapter.refresh();
-			currentPage = 1;
-			loadMore(true);
+			currentPage = 0;
+			loadMore(1, true);
 		});
 
 		imagesList.setLayoutManager(gridLayoutManager);
@@ -116,19 +115,20 @@ public class SearchResultsActivity extends LifecycleActivity {
 		imagesList.setAdapter(imagesAdapter);
 		imagesList.addOnScrollListener(scrollListener);
 
+		int requestPage;
 		if (savedInstanceState != null){
 			currentPage = savedInstanceState.getInt("page");
+			requestPage = currentPage;
 			scrollListener.setCurrentPage(currentPage);
 			Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
 			imagesList.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
 		}else{
-			currentPage = 1;
+			currentPage = 0;
+			requestPage = 1;
 		}
 
 		fab.setOnClickListener(v -> finish());
-
-	//	flickerImagesSearchPresenter.bind(this);
-		loadMore(false);
+		loadMore(requestPage, false);
 
 	}
 
@@ -159,6 +159,7 @@ public class SearchResultsActivity extends LifecycleActivity {
 	protected void onSaveInstanceState(Bundle outState){
 		super.onSaveInstanceState(outState);
 		outState.putInt("page", currentPage);
+
 		outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, imagesList.getLayoutManager().onSaveInstanceState());
 	}
 
@@ -178,24 +179,28 @@ public class SearchResultsActivity extends LifecycleActivity {
 
 
 
-	private void loadMore(boolean clearCache){
+	private void loadMore(int page, boolean clearCache){
 		String query = getIntent().getStringExtra(QUERY_EXTRA);
-		//flickerImagesSearchPresenter.getImages(query, currentPage);
-
 		swipeRefreshLayout.setRefreshing(true);
-		searchResultsViewModel.loadMore(query, currentPage, clearCache).observe(this, observer);
+		searchResultsViewModel.loadMore(query, page, clearCache).observe(this, observer);
 	}
 
 
 
-	private class ViewModelObserver implements Observer<List<ImageData>>{
+	private class ViewModelObserver implements Observer<ImagesData>{
 
 
 
 		@Override
-		public void onChanged(@Nullable List<ImageData> imageData){
+		public void onChanged(@Nullable ImagesData imagesData){
 			swipeRefreshLayout.setRefreshing(false);
-			imagesAdapter.addImages(imageData);
+
+			if (imagesData == null || imagesData.images == null) {
+				//TODO: handle empty state or no more results
+				return;
+			}
+			currentPage = imagesData.page;
+			imagesAdapter.addImages(imagesData.images);
 		}
 	}
 

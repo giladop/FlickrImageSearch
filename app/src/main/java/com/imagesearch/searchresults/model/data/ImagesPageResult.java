@@ -9,7 +9,8 @@ import com.google.gson.annotations.SerializedName;
  *
  * @author Gilad Opher
  */
-public class ImagesResultObject{
+public class ImagesPageResult {
+
 
 
 	@SerializedName("photos")

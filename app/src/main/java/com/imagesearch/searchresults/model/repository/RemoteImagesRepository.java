@@ -3,9 +3,7 @@ package com.imagesearch.searchresults.model.repository;
 import android.support.annotation.NonNull;
 
 import com.imagesearch.searchresults.model.api.FlickerApi;
-import com.imagesearch.searchresults.model.data.ImageData;
-
-import java.util.List;
+import com.imagesearch.searchresults.model.data.ImagesData;
 
 import javax.inject.Inject;
 
@@ -35,13 +33,14 @@ public class RemoteImagesRepository implements RemoteRepository{
 
 
 	@Override
-	public Observable<List<ImageData>> getImages(@NonNull String query, int page){
+	public Observable<ImagesData> getImages(@NonNull String query, int page){
 
 		return api.getImages(query, page)
 				.subscribeOn(Schedulers.io())
-				.map(res -> res.imagesData.images)
-				.flatMapIterable(images -> images)
-				.buffer(3);
+				.map(res -> res.imagesData);
+
+//				.flatMapIterable(images -> images)
+//				.buffer(3);
 
 //		return api.getImages(query, page)
 //				.subscribeOn(Schedulers.io())

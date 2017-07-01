@@ -3,16 +3,15 @@ package com.imagesearch.searchresults.view;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.imagesearch.searchresults.model.data.ImageData;
+import com.imagesearch.searchresults.model.data.ImagesData;
 import com.imagesearch.searchresults.model.repository.ImagesRepository;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
 
 
 /**
+ *
  * Created by giladopher on 05/06/2017.
  */
 public class SearchResultsViewModel extends ViewModel{
@@ -29,7 +28,7 @@ public class SearchResultsViewModel extends ViewModel{
 	}
 
 
-	public LiveData<List<ImageData>> loadMore(String query, int page, boolean clearCache){
+	LiveData<ImagesData> loadMore(String query, int page, boolean clearCache){
 		return repository.loadMore(query, page, clearCache);
 
 	}
