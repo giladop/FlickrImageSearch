@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -78,6 +79,10 @@ public class HomeActivity extends LifecycleActivity
 
 	@BindView(R.id.nav_view)
 	NavigationView navigationView;
+
+
+	@BindView(R.id.swipe_refresh_layout)
+	SwipeRefreshLayout imagesListSwipeRefreshLayout;
 
 
 	@BindView(R.id.images_list)
@@ -169,6 +174,14 @@ public class HomeActivity extends LifecycleActivity
 		}
 
 		setupUser(mFirebaseAuth.getCurrentUser());
+
+
+		imagesListSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				refreshFavorites();
+			}
+		});
 	}
 
 
@@ -211,14 +224,23 @@ public class HomeActivity extends LifecycleActivity
 			signInSignOut.setText(R.string.sign_out);
 
 			favoritesViewModel.init(currentUser.getUid());
-			favoritesViewModel.getFavoritesImage().observe(this, this::setupFavoritesImages);
-
+			refreshFavorites();
 		}
-
-
 	}
 
+
+
+	private void refreshFavorites(){
+		imagesListSwipeRefreshLayout.setRefreshing(true);
+		favoritesViewModel.getFavoritesImage().observe(this, this::setupFavoritesImages);
+	}
+
+
+
 	private void setupFavoritesImages(List<ImageData> imagesData){
+		imagesListSwipeRefreshLayout.setRefreshing(false);
+
+
 		if (imagesAdapter == null){
 			imagesAdapter = new ImagesAdapter(this, this::openFullScreenImageView, false);
 			imagesList.setAdapter(imagesAdapter);

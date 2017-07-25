@@ -9,9 +9,12 @@
 
 	<ImageView
 		android:id="@+id/image_view"
-		android:layout_width="match_parent"
-		android:layout_height="350dp"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:minHeight="300dp"
+		android:adjustViewBounds="true"
 		android:scaleType="fitCenter"
 		android:transitionName="transition_photo"/>
+
 
 </FrameLayout>
