@@ -2,7 +2,6 @@ package com.imagesearch.searchresults.view;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.arch.lifecycle.LifecycleActivity;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -39,7 +39,7 @@ import butterknife.ButterKnife;
  * For simplify the activity hosts both search and list fragments and delegate actions/data to proper fragment.
  *
  */
-public class SearchResultsActivity extends LifecycleActivity {
+public class SearchResultsActivity extends AppCompatActivity {
 
 
 	private static final String BUNDLE_RECYCLER_LAYOUT = "search.result.activity.recycler.layout";
